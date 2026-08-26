@@ -9,90 +9,87 @@ import { createPortal, unstable_batchedUpdates } from 'react-dom';
 import { reach } from 'yup';
 import { resume } from 'react-dom/server';
 
-// Practise Code 29 : useContext Hook and context consumer in React
+//Practise Code 30 : Custom Hooks In React
 
-const employeeContext = React.createContext();
+function useList(url) {
+    const [data, setData] = useState([]);
 
-function App() {
-    const [employee, setEmployee] = useState({
-        Id: 101, Name: 'Ajit', Location: 'Pune',
-        Salary: 35000, EmploymentType: 'Contract'
+    useEffect(() => {
+        fetch(url)
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    setData(result);
+                }
+            );
     });
-    return (
-        <div>
-            <h2>Welcome to App Component...</h2>
-            <p>
-                <label>Employee Salary : <b>{employee.Salary}</b></label>
-            </p>
-            <employeeContext.Provider value={{ data: employee, updateEmployee: setEmployee }}>
-                <Employee></Employee>
-            </employeeContext.Provider>
-        </div>
-    );
+
+    return data;
 }
 
 function Employee() {
-    let context = useContext(employeeContext);
 
-    function changeEmploymentType() {
-        context.updateEmployee({ ...context.data, EmploymentType: 'Permanent' })
-    }
+    const employees = useList("https://localhost:7150/api/Employee");
 
     return (
         <div>
-            <h2>Welcome to Employee Component...</h2>
-            <p>
-                <label>Employee ID : <b>{context.data.Id}</b></label>
-            </p>
-            <p>
-                <label>Employee Name : <b>{context.data.Name}</b></label>
-            </p>
-            <p>
-                <label>Employee Salary : <b>{context.data.Salary}</b></label>
-            </p>
-            <employeeContext.Consumer>
-                {value => value.data.EmploymentType === 'Permanent' ?
-                    <Permanent></Permanent> : <Contract></Contract>}
-            </employeeContext.Consumer>
-            <button onClick={changeEmploymentType}>Make Permanent</button>
-            <Salary></Salary>
+            <h2>Employees Data...</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Location</th>
+                        <th>Salary</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {employees.map(emp => (
+                        <tr key={emp.id}>
+                            <td>{emp.id}</td>
+                            <td>{emp.name}</td>
+                            <td>{emp.location}</td>
+                            <td>{emp.salary}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 }
 
-function Salary() {
-    let context = useContext(employeeContext);
+function Department() {
 
-    function updateSalary() {
-        context.updateEmployee({ ...context.data, Salary: 54500 });
-    }
+    const departments = useList("https://localhost:7150/api/Dept");
 
     return (
         <div>
-            <h2>Welcome to Salary Component...</h2>
-            <p>
-                <label>Employee Location : <b>{context.data.Location}</b></label>
-            </p>
-            <p>
-                <label>Employee Salary : <b>{context.data.Salary}</b></label>
-            </p>
-            <button onClick={updateSalary}>Update</button>
+            <h2>Department Data...</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {departments.map(emp => (
+                        <tr key={emp.id}>
+                            <td>{emp.id}</td>
+                            <td>{emp.name}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 }
 
-function Permanent() {
+function App() {
     return (
         <div>
-            <h2>Permanent Component Contetnts...</h2>
-        </div>
-    );
-}
-
-function Contract() {
-    return (
-        <div>
-            <h2>Contract Component Contents...</h2>
+            <Employee></Employee>
+            <Department></Department>
         </div>
     )
 }
@@ -100,6 +97,98 @@ function Contract() {
 const container = document.getElementById("root");
 const newroot = createRoot(container);
 newroot.render(<App></App>);
+
+// Practise Code 29 : useContext Hook and context consumer in React
+
+//const employeeContext = React.createContext();
+
+//function App() {
+//    const [employee, setEmployee] = useState({
+//        Id: 101, Name: 'Ajit', Location: 'Pune',
+//        Salary: 35000, EmploymentType: 'Contract'
+//    });
+//    return (
+//        <div>
+//            <h2>Welcome to App Component...</h2>
+//            <p>
+//                <label>Employee Salary : <b>{employee.Salary}</b></label>
+//            </p>
+//            <employeeContext.Provider value={{ data: employee, updateEmployee: setEmployee }}>
+//                <Employee></Employee>
+//            </employeeContext.Provider>
+//        </div>
+//    );
+//}
+
+//function Employee() {
+//    let context = useContext(employeeContext);
+
+//    function changeEmploymentType() {
+//        context.updateEmployee({ ...context.data, EmploymentType: 'Permanent' })
+//    }
+
+//    return (
+//        <div>
+//            <h2>Welcome to Employee Component...</h2>
+//            <p>
+//                <label>Employee ID : <b>{context.data.Id}</b></label>
+//            </p>
+//            <p>
+//                <label>Employee Name : <b>{context.data.Name}</b></label>
+//            </p>
+//            <p>
+//                <label>Employee Salary : <b>{context.data.Salary}</b></label>
+//            </p>
+//            <employeeContext.Consumer>
+//                {value => value.data.EmploymentType === 'Permanent' ?
+//                    <Permanent></Permanent> : <Contract></Contract>}
+//            </employeeContext.Consumer>
+//            <button onClick={changeEmploymentType}>Make Permanent</button>
+//            <Salary></Salary>
+//        </div>
+//    );
+//}
+
+//function Salary() {
+//    let context = useContext(employeeContext);
+
+//    function updateSalary() {
+//        context.updateEmployee({ ...context.data, Salary: 54500 });
+//    }
+
+//    return (
+//        <div>
+//            <h2>Welcome to Salary Component...</h2>
+//            <p>
+//                <label>Employee Location : <b>{context.data.Location}</b></label>
+//            </p>
+//            <p>
+//                <label>Employee Salary : <b>{context.data.Salary}</b></label>
+//            </p>
+//            <button onClick={updateSalary}>Update</button>
+//        </div>
+//    );
+//}
+
+//function Permanent() {
+//    return (
+//        <div>
+//            <h2>Permanent Component Contetnts...</h2>
+//        </div>
+//    );
+//}
+
+//function Contract() {
+//    return (
+//        <div>
+//            <h2>Contract Component Contents...</h2>
+//        </div>
+//    )
+//}
+
+//const container = document.getElementById("root");
+//const newroot = createRoot(container);
+//newroot.render(<App></App>);
 
 
 
