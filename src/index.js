@@ -9,87 +9,23 @@ import { createPortal, unstable_batchedUpdates } from 'react-dom';
 import { reach } from 'yup';
 import { resume } from 'react-dom/server';
 
-//Practise Code 30 : Custom Hooks In React
-
-function useList(url) {
-    const [data, setData] = useState([]);
-
-    useEffect(() => {
-        fetch(url)
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    setData(result);
-                }
-            );
-    });
-
-    return data;
-}
-
-function Employee() {
-
-    const employees = useList("https://localhost:7150/api/Employee");
-
-    return (
-        <div>
-            <h2>Employees Data...</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Name</th>
-                        <th>Location</th>
-                        <th>Salary</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {employees.map(emp => (
-                        <tr key={emp.id}>
-                            <td>{emp.id}</td>
-                            <td>{emp.name}</td>
-                            <td>{emp.location}</td>
-                            <td>{emp.salary}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-    );
-}
-
-function Department() {
-
-    const departments = useList("https://localhost:7150/api/Dept");
-
-    return (
-        <div>
-            <h2>Department Data...</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Name</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {departments.map(emp => (
-                        <tr key={emp.id}>
-                            <td>{emp.id}</td>
-                            <td>{emp.name}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-    );
-}
+//Practise Code 31 : Import Custom Hooks from NPM in React
 
 function App() {
+    const [text, setText] = useState();
+
+    const { listen, stop } = useSpeechRecognition({
+        onResult: result => setText(result)
+    });
+
     return (
         <div>
-            <Employee></Employee>
-            <Department></Department>
+            <h2>Converting the Speech to Text...</h2>
+            <textarea value={text}></textarea>
+            <p>
+                <button onClick={listen}>Listen</button>
+                <button onClick={stop}>Stop</button>
+            </p>
         </div>
     )
 }
@@ -97,6 +33,95 @@ function App() {
 const container = document.getElementById("root");
 const newroot = createRoot(container);
 newroot.render(<App></App>);
+
+//Practise Code 30 : Custom Hooks In React
+
+//function useList(url) {
+//    const [data, setData] = useState([]);
+
+//    useEffect(() => {
+//        fetch(url)
+//            .then(res => res.json())
+//            .then(
+//                (result) => {
+//                    setData(result);
+//                }
+//            );
+//    });
+
+//    return data;
+//}
+
+//function Employee() {
+
+//    const employees = useList("https://localhost:7150/api/Employee");
+
+//    return (
+//        <div>
+//            <h2>Employees Data...</h2>
+//            <table>
+//                <thead>
+//                    <tr>
+//                        <th>Id</th>
+//                        <th>Name</th>
+//                        <th>Location</th>
+//                        <th>Salary</th>
+//                    </tr>
+//                </thead>
+//                <tbody>
+//                    {employees.map(emp => (
+//                        <tr key={emp.id}>
+//                            <td>{emp.id}</td>
+//                            <td>{emp.name}</td>
+//                            <td>{emp.location}</td>
+//                            <td>{emp.salary}</td>
+//                        </tr>
+//                    ))}
+//                </tbody>
+//            </table>
+//        </div>
+//    );
+//}
+
+//function Department() {
+
+//    const departments = useList("https://localhost:7150/api/Dept");
+
+//    return (
+//        <div>
+//            <h2>Department Data...</h2>
+//            <table>
+//                <thead>
+//                    <tr>
+//                        <th>Id</th>
+//                        <th>Name</th>
+//                    </tr>
+//                </thead>
+//                <tbody>
+//                    {departments.map(emp => (
+//                        <tr key={emp.id}>
+//                            <td>{emp.id}</td>
+//                            <td>{emp.name}</td>
+//                        </tr>
+//                    ))}
+//                </tbody>
+//            </table>
+//        </div>
+//    );
+//}
+
+//function App() {
+//    return (
+//        <div>
+//            <Employee></Employee>
+//            <Department></Department>
+//        </div>
+//    )
+//}
+
+//const container = document.getElementById("root");
+//const newroot = createRoot(container);
+//newroot.render(<App></App>);
 
 // Practise Code 29 : useContext Hook and context consumer in React
 
