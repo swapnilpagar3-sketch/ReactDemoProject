@@ -1,4 +1,4 @@
-import React, { Profiler, Component, useState, useEffect} from 'react';
+import React, { Profiler, Component, useState, useEffect, useContext} from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 //import { ErrorMessage, Field, Formik, useFormik, Form } from 'formik';
@@ -8,78 +8,344 @@ import './index.css';
 import { createPortal, unstable_batchedUpdates } from 'react-dom';
 import { reach } from 'yup';
 import { resume } from 'react-dom/server';
+import { useSpeechRecognition } from 'react-speech-kit';
+//import { BrowserRouter, Link, Switch, Route } from 'react-router-dom';
+import {
+    BrowserRouter,
+    Link,
+    Routes,
+    Route
+} from 'react-router-dom';
+import Employee from './employee';
+import Department from './department';
+import Project from './project';
 
-// Practise Code 29 : 
+//Practise Code 32 : Routing in React
 
-//Practise Code 28 : useEffect hook in React (Part 3)
-
-function Employee(){
-    const [employeeCount, setEmployeeCount] = useState(0);
-
-    //const[noOfDays, setNoOfDays] = useState(0); 
-
-    useEffect(() => {
-        alert('Coming from First Effect');
-        var handle = setInterval(getEmployeesCount,5000);
-
-        return() => {
-            clearInterval(handle);  
-        }
-    }, []);
-
-    // useEffect(() => {
-    //     alert('Coming from second Effect');
-    //     fetch("https://localhost:7150/api/Test")
-    //     .then(res => res.json())
-    //     .then(
-    //         (result) => {
-    //             setNoOfDays(result);
-    //         }
-    //     );
-    // })
-
-    function getEmployeesCount(){
-        //alert('Getting the employees count');
-        fetch("https://localhost:7150/api/Employee")
-        .then(res => res.json())
-        .then(
-         (result) => {
-            setEmployeeCount(result.length);
-         }
-        );
-    }
-
-    function navigateToDepartment(){
-        const container = document.getElementById("root");
-        const newroot = createRoot(container);
-        newroot.render(<Departments></Departments>);
-    }
-
-    return(
+function App() {
+    return (
         <div>
-            <h2>Welcome to Employee Component...</h2>
-            <p>
-                <label>Employee Count : <b>{employeeCount}</b></label>
-            </p>
-            {/* <p>
-                <label>Last Employee Added : <b>{noOfDays} days ago...</b></label>
-            </p> */}
-            <button onClick={navigateToDepartment}>Departments</button>
-        </div>
-    )
-}
+            <h2>Welcome To App Component...</h2>
 
-function Departments(){
-    return(
-        <div>
-            <h2>Welcome to Departments Component...</h2>
+            <ul>
+                <li>
+                    <Link to="/employees">Employees</Link>
+                </li>
+
+                <li>
+                    <Link to="/departments">Departments</Link>
+                </li>
+
+                <li>
+                    <Link to="/projects">Projects</Link>
+                </li>
+            </ul>
+
+            <Routes>
+                <Route
+                    path="/employees"
+                    element={<Employee />}
+                />
+
+                <Route
+                    path="/departments"
+                    element={<Department />}
+                />
+
+                <Route
+                    path="/projects"
+                    element={<Project />}
+                />
+            </Routes>
         </div>
-    )
+    );
 }
 
 const container = document.getElementById("root");
+
 const newroot = createRoot(container);
-newroot.render(<Employee></Employee>);
+
+newroot.render(
+    <BrowserRouter>
+        <App />
+    </BrowserRouter>
+);
+
+//Practise Code 31 : Import Custom Hooks from NPM in React
+
+// function App(){
+//     const [text, setText] = useState();
+
+//     const{listen, stop} = useSpeechRecognition({
+//         onResult: result => setText(result)
+//     });
+    
+//     return(
+//         <div>
+//             <h2>Converting the Speech to Text...</h2>
+//             <textarea value={text}></textarea>
+//             <p>
+//                 <button onClick={listen}>Listen</button>
+//                 <button onClick={stop}>Stop</button>
+//             </p>
+//         </div>
+//     )
+// }
+
+// const container = document.getElementById("root");
+// const newroot = createRoot(container);
+// newroot.render(<App></App>);
+
+
+//Practise Code 30 : Custom Hooks In React
+
+// function useList(url){
+//     const [data, setData] = useState([]);
+
+//     useEffect(() => {
+//             fetch(url)
+//             .then(res => res.json())
+//             .then(
+//                 (result) => {
+//                     setData(result);
+//                 }
+//             );
+//         }); 
+
+//     return data;
+// }
+
+// function Employee(){
+    
+//     const employees = useList("https://localhost:7150/api/Employee");
+
+//         return(
+//             <div>
+//                 <h2>Employees Data...</h2>
+//                 <table>
+//                     <thead>
+//                         <tr>
+//                             <th>Id</th>
+//                             <th>Name</th>
+//                             <th>Location</th>
+//                             <th>Salary</th>
+//                         </tr>
+//                     </thead>
+//                     <tbody>
+//                         {employees.map(emp => (
+//                             <tr key={emp.id}>
+//                                 <td>{emp.id}</td>
+//                                 <td>{emp.name}</td>
+//                                 <td>{emp.location}</td>
+//                                 <td>{emp.salary}</td>
+//                             </tr>
+//                         ))}
+//                     </tbody>
+//                 </table>
+//             </div>
+//         );
+// }
+
+// function Department(){
+    
+//     const departments = useList("https://localhost:7150/api/Dept");
+
+//     return(
+//         <div>
+//             <h2>Department Data...</h2>
+//             <table>
+//                 <thead>
+//                     <tr>
+//                         <th>Id</th>
+//                         <th>Name</th>
+//                     </tr>
+//                 </thead>
+//                 <tbody>
+//                     {departments.map(emp => (
+//                         <tr key={emp.id}>
+//                             <td>{emp.id}</td>
+//                             <td>{emp.name}</td>
+//                         </tr>
+//                     ))}
+//                 </tbody>
+//             </table>
+//         </div>
+//     );
+// }
+
+// function App(){
+//     return(
+//         <div>
+//             <Employee></Employee>
+//             <Department></Department>
+//         </div>
+//     )
+// }
+
+// const container = document.getElementById("root");
+// const newroot = createRoot(container);
+// newroot.render(<App></App>);
+
+// Practise Code 29 : useContext Hook and context consumer in React
+
+// const employeeContext = React.createContext();
+
+// function App(){
+//     const [employee, setEmployee] = useState({Id: 101, Name:'Ajit', Location:'Pune', 
+//                                               Salary: 35000, EmploymentType:'Contract'});
+//     return(
+//         <div>
+//             <h2>Welcome to App Component...</h2>
+//             <p>
+//                 <label>Employee Salary : <b>{employee.Salary}</b></label>
+//             </p>
+//             <employeeContext.Provider value={{data: employee, updateEmployee: setEmployee}}>
+//                 <Employee></Employee>
+//             </employeeContext.Provider>
+//         </div>
+//     );
+// }
+
+// function Employee(){
+//     let context = useContext(employeeContext);
+
+//     function changeEmploymentType(){
+//         context.updateEmployee({...context.data, EmploymentType: 'Permanent'})
+//     }
+
+//     return(
+//         <div>
+//             <h2>Welcome to Employee Component...</h2>
+//             <p>
+//                 <label>Employee ID : <b>{context.data.Id}</b></label>
+//             </p>
+//             <p>
+//                 <label>Employee Name : <b>{context.data.Name}</b></label>
+//             </p>
+//             <p>
+//                 <label>Employee Salary : <b>{context.data.Salary}</b></label>
+//             </p>
+//             <employeeContext.Consumer>
+//                 {value => value.data.EmploymentType === 'Permanent' ?
+//                 <Permanent></Permanent> : <Contract></Contract>}
+//             </employeeContext.Consumer>
+//             <button onClick={changeEmploymentType}>Make Permanent</button>
+//             <Salary></Salary>
+//         </div>
+//     );
+// }
+
+// function Salary(){
+//     let context = useContext(employeeContext);
+
+//     function updateSalary(){
+//        context.updateEmployee({...context.data, Salary:54500});
+//     }
+
+//     return(
+//         <div>
+//             <h2>Welcome to Salary Component...</h2>
+//             <p>
+//                 <label>Employee Location : <b>{context.data.Location}</b></label>
+//             </p>
+//             <p>
+//                 <label>Employee Salary : <b>{context.data.Salary}</b></label>
+//             </p>
+//             <button onClick={updateSalary}>Update</button>
+//         </div>
+//     );
+// }
+
+// function Permanent(){
+//     return(
+//         <div>
+//             <h2>Permanent Component Contetnts...</h2>
+//         </div>
+//     );
+// }
+
+// function Contract(){
+//     return(
+//         <div>
+//             <h2>Contract Component Contents...</h2>
+//         </div> 
+//     )
+// }
+
+// const container = document.getElementById("root");
+// const newroot = createRoot(container);
+// newroot.render(<App></App>);
+
+
+//Practise Code 28 : useEffect hook in React (Part 3)
+
+// function Employee(){
+//     const [employeeCount, setEmployeeCount] = useState(0);
+
+//     //const[noOfDays, setNoOfDays] = useState(0); 
+
+//     useEffect(() => {
+//         alert('Coming from First Effect');
+//         var handle = setInterval(getEmployeesCount,5000);
+
+//         return() => {
+//             clearInterval(handle);  
+//         }
+//     }, []);
+
+//     // useEffect(() => {
+//     //     alert('Coming from second Effect');
+//     //     fetch("https://localhost:7150/api/Test")
+//     //     .then(res => res.json())
+//     //     .then(
+//     //         (result) => {
+//     //             setNoOfDays(result);
+//     //         }
+//     //     );
+//     // })
+
+//     function getEmployeesCount(){
+//         //alert('Getting the employees count');
+//         fetch("https://localhost:7150/api/Employee")
+//         .then(res => res.json())
+//         .then(
+//          (result) => {
+//             setEmployeeCount(result.length);
+//          }
+//         );
+//     }
+
+//     function navigateToDepartment(){
+//         const container = document.getElementById("root");
+//         const newroot = createRoot(container);
+//         newroot.render(<Departments></Departments>);
+//     }
+
+//     return(
+//         <div>
+//             <h2>Welcome to Employee Component...</h2>
+//             <p>
+//                 <label>Employee Count : <b>{employeeCount}</b></label>
+//             </p>
+//             {/* <p>
+//                 <label>Last Employee Added : <b>{noOfDays} days ago...</b></label>
+//             </p> */}
+//             <button onClick={navigateToDepartment}>Departments</button>
+//         </div>
+//     )
+// }
+
+// function Departments(){
+//     return(
+//         <div>
+//             <h2>Welcome to Departments Component...</h2>
+//         </div>
+//     )
+// }
+
+// const container = document.getElementById("root");
+// const newroot = createRoot(container);
+// newroot.render(<Employee></Employee>);
 
 //Practise Code 27 : useEffect hook in React
 
